@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin · Rideekanda</title>
+  <link rel="icon" type="image/png" href="images/rideekanda-logo.png" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div id="login" class="login-card" hidden>
+    <h2>Admin login</h2>
+    <div id="loginFlash"></div>
+    <form id="loginForm">
+      <label for="email">Email</label>
+      <input id="email" type="email" autocomplete="email" required />
+      <label for="password">Password</label>
+      <input id="password" type="password" autocomplete="current-password" required />
+      <button type="submit" id="loginBtn">Log in</button>
+    </form>
+    <p style="margin-top:24px;font-size:.8rem;color:var(--muted)">
+      <a href="index.html">← Back to site</a>
+    </p>
+  </div>
+
+  <div id="adminShell" class="admin-shell" hidden>
+    <div class="session-bar">
+      <span>Logged in as <strong id="userEmail"></strong></span>
+      <button id="logoutBtn" class="secondary">Log out</button>
+    </div>
+
+    <div id="flash"></div>
+
+    <section class="section-card">
+      <h3>Add a new tile</h3>
+      <form id="addForm" class="inline-form">
+        <div class="field-row">
+          <div>
+            <label for="newTitle">Title *</label>
+            <input id="newTitle" type="text" required />
+          </div>
+          <div>
+            <label for="newUrl">URL *</label>
+            <input id="newUrl" type="url" placeholder="https://…" required />
+          </div>
+        </div>
+        <div>
+          <label for="newIcon">Icon image URL (optional)</label>
+          <input id="newIcon" type="url" placeholder="https://…/icon.png" />
+        </div>
+        <div>
+          <label for="newDesc">Short description (optional)</label>
+          <textarea id="newDesc" rows="2"></textarea>
+        </div>
+        <div class="field-row">
+          <div>
+            <label for="newSort">Sort order (lower = earlier)</label>
+            <input id="newSort" type="number" value="0" />
+          </div>
+          <div>
+            <label for="newVisible" style="margin-top:24px">
+              <input id="newVisible" type="checkbox" checked /> Visible
+            </label>
+          </div>
+        </div>
+        <button type="submit">Add tile</button>
+      </form>
+    </section>
+
+    <section class="section-card">
+      <h3>Existing tiles</h3>
+      <div id="tilesList"><p class="loading">Loading…</p></div>
+    </section>
+
+    <p style="text-align:center;margin-top:24px"><a href="index.html">← View public site</a></p>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/config.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>
