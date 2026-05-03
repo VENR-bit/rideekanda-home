@@ -217,6 +217,11 @@ button.danger {
 .row-actions { display: inline-flex; gap: 6px; }
 .row-actions button { margin-top: 0; padding: 6px 10px; font-size: .8rem; }
 
+.sort-cell { display: inline-flex; align-items: center; gap: 4px; }
+.sort-num { min-width: 20px; text-align: center; font-variant-numeric: tabular-nums; color: var(--muted); font-size: .85rem; }
+.sort-btn { margin-top: 0; padding: 2px 6px; font-size: .7rem; line-height: 1; min-width: 22px; }
+.sort-btn:disabled { opacity: .3; cursor: not-allowed; }
+
 .session-bar {
   display: flex;
   justify-content: space-between;

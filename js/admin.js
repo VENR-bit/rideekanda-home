@@ -91,17 +91,25 @@ async function loadTiles() {
         <tr><th>Sort</th><th>Title</th><th>URL</th><th>Visible</th><th></th></tr>
       </thead>
       <tbody>
-        ${data.map(rowHtml).join('')}
+        ${data.map((t, i) => rowHtml(t, i, data.length)).join('')}
       </tbody>
     </table>
   `;
   attachRowHandlers(data);
 }
 
-function rowHtml(t) {
+function rowHtml(t, idx, total) {
+  const isFirst = idx === 0;
+  const isLast = idx === total - 1;
   return `
     <tr data-id="${t.id}" data-row>
-      <td>${t.sort_order}</td>
+      <td>
+        <div class="sort-cell">
+          <button data-action="up" class="secondary sort-btn" title="Move up" ${isFirst ? 'disabled' : ''}>▲</button>
+          <span class="sort-num">${t.sort_order}</span>
+          <button data-action="down" class="secondary sort-btn" title="Move down" ${isLast ? 'disabled' : ''}>▼</button>
+        </div>
+      </td>
       <td><strong>${escapeHtml(t.title)}</strong>${t.description ? `<br><span style="color:var(--muted);font-size:.8rem">${escapeHtml(t.description)}</span>` : ''}</td>
       <td class="url-col"><a href="${escapeHtml(t.url)}" target="_blank" rel="noopener">${escapeHtml(t.url)}</a></td>
       <td>${t.visible ? '✓' : '—'}</td>
@@ -113,6 +121,26 @@ function rowHtml(t) {
       </td>
     </tr>
   `;
+}
+
+async function moveTile(tiles, currentId, direction) {
+  // Stable sort matching the public order: sort_order asc, then created_at asc.
+  const sorted = [...tiles].sort((a, b) =>
+    (a.sort_order - b.sort_order) ||
+    (new Date(a.created_at) - new Date(b.created_at))
+  );
+  const idx = sorted.findIndex(x => x.id === currentId);
+  const newIdx = direction === 'up' ? idx - 1 : idx + 1;
+  if (newIdx < 0 || newIdx >= sorted.length) return;
+  [sorted[idx], sorted[newIdx]] = [sorted[newIdx], sorted[idx]];
+  // Renumber every tile 1..N so values stay distinct and predictable.
+  for (let i = 0; i < sorted.length; i++) {
+    const desired = i + 1;
+    if (sorted[i].sort_order === desired) continue;
+    const { error } = await db.from(TILES_TABLE).update({ sort_order: desired }).eq('id', sorted[i].id);
+    if (error) { flash(error.message, 'err'); return; }
+  }
+  loadTiles();
 }
 
 function attachRowHandlers(tiles) {
@@ -128,6 +156,10 @@ function attachRowHandlers(tiles) {
       loadTiles();
     });
     tr.querySelector('[data-action="edit"]').addEventListener('click', () => openEdit(tr, byId[id]));
+    const upBtn = tr.querySelector('[data-action="up"]');
+    const downBtn = tr.querySelector('[data-action="down"]');
+    if (upBtn) upBtn.addEventListener('click', () => moveTile(tiles, id, 'up'));
+    if (downBtn) downBtn.addEventListener('click', () => moveTile(tiles, id, 'down'));
   });
 }
 
