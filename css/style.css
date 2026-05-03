@@ -29,11 +29,11 @@ a { color: inherit; text-decoration: none; }
 }
 
 .site-header img.logo {
-  width: 84px;
-  height: 84px;
+  width: 168px;
+  height: 168px;
   object-fit: contain;
   display: block;
-  margin: 0 auto 8px;
+  margin: 0 auto 12px;
 }
 
 .site-header h1 {
